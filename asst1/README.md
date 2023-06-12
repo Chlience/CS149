@@ -2,6 +2,8 @@
 
 原始题目见 [Handout.md](./Handout.md)
 
+## Program 1: Parallel Fractal Generation Using Threads
+
 > Is speedup linear in the number of threads used? In your writeup hypothesize why this is (or is not) the case? (you may also wish to produce a graph for VIEW 2 to help you come up with a good answer. Hint: take a careful look at the three-thread datapoint.)
 > To confirm (or disprove) your hypothesis, measure the amount of time each thread requires to complete its work by inserting timing code at the beginning and end of workerThreadStart(). How do your measurements explain the speedup graph you previously created?
 
@@ -42,3 +44,28 @@
 当不同线程的任务量已经趋于相等时，超过物理线程的线程数会增加非并行部分的花费，
 
 但在并行性不够好时，增加线程超过物理线程数相当于手动将任务分成更小的部分，从而提高加速比。
+
+## Program 2: Vectorizing Code Using SIMD Intrinsics
+
+> Implement a vectorized version of clampedExpSerial in clampedExpVector . Your implementation should work with any combination of input array size (N) and vector width (VECTOR_WIDTH).
+
+详见代码
+
+> Run ./myexp -s 10000 and sweep the vector width from 2, 4, 8, to 16. Record the resulting vector utilization. You can do this by changing the #define VECTOR_WIDTH value in CS149intrin.h. Does the vector utilization increase, decrease or stay the same as VECTOR_WIDTH changes? Why?
+
+|vector width|utilization|
+|-|-|-|
+|2|79.8%|
+|4|72.1%|
+|8|68.1%|
+|16|66.3%|
+
+随着 VECTOR_WIDTH 提升，vector utilization 不断下降
+
+原因是当 VECTOR_WIDTH 增大，
+每个 exponents 和组内最大 exponents 的差值期望增加，
+故 disable 的 vector lanes 期望增加
+
+> Extra credit: (1 point) Implement a vectorized version of arraySumSerial in arraySumVector. Your implementation may assume that VECTOR_WIDTH is a factor of the input array size N. Whereas the serial implementation has O(N) span, your implementation should have at most O(N / VECTOR_WIDTH + log2(VECTOR_WIDTH)) span. You may find the hadd and interleave operations useful.
+
+详见代码
