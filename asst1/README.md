@@ -32,5 +32,13 @@
 
 ![prog1-1](./assets/prog1-1.png)
 
+> Modify the mapping of work to threads to achieve to improve speedup to at about 7-8x on both views of the Mandelbrot set.
+
+观察计算密度分布，再进行行的分配，让每个进程的计算量趋于相等。
+关于行和计算量的关系可以静态分析，或者用插值实现
+
 > Now run your improved code with 16 threads. Is performance noticably greater than when running with eight threads? Why or why not?
 
+当不同线程的任务量已经趋于相等时，超过物理线程的线程数会增加非并行部分的花费，
+
+但在并行性不够好时，增加线程超过物理线程数相当于手动将任务分成更小的部分，从而提高加速比。
