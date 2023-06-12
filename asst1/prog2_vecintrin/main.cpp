@@ -241,7 +241,7 @@ void clampedExpSerial(float* values, int* exponents, float* output, int N) {
 }
 
 void clampedExpVector(float* values, int* exponents, float* output, int N) {
-  
+
   //
   // CS149 STUDENTS TODO: Implement your vectorized version of
   // clampedExpSerial() here.
@@ -258,7 +258,7 @@ void clampedExpVector(float* values, int* exponents, float* output, int N) {
   __cs149_mask maskAll, mask, maskMax;
   
   for (int i=0; i<N; i+=VECTOR_WIDTH) {
-    maskAll = _cs149_init_ones();
+    maskAll = _cs149_init_ones(min(VECTOR_WIDTH, N - i));
     _cs149_vload_float(x, values+i, maskAll);
     _cs149_vload_int(y, exponents+i, maskAll);
     result = _cs149_vset_float(1.f);
