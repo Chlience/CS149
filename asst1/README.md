@@ -37,7 +37,7 @@
 同时，在 VIEW 2 下线程数和加速比更接近线性关系，
 这是由于 VIEW 2 下均分行分配给线程的计算量相近。
 
-![prog1-1](./assets/prog1-1.png)
+![prog1-1](./assets/prog1-1.png)7-/
 
 > Modify the mapping of work to threads to achieve to improve speedup to at about 7-8x on both views of the Mandelbrot set (if you're above 7x that's fine, don't sweat it). You may not use any synchronization between threads in your solution. We are expecting you to come up with a single work decomposition policy that will work well for all thread counts---hard coding a solution specific to each configuration is not allowed! (Hint: There is a very simple static assignment that will achieve this goal, and no communication/synchronization among threads is necessary.). In your writeup, describe your approach to parallelization and report the final 8-thread speedup obtained.
 
@@ -68,15 +68,50 @@ TODO
 |8|68.1%|
 |16|66.3%|
 
-随着 VECTOR_WIDTH 提升，vector utilization 不断下降
-
-原因是当 VECTOR_WIDTH 增大，
-每个 exponents 和组内最大 exponents 的差值期望增加，
-故 disable 的 vector lanes 期望增加
-
-> Extra credit: (1 point) Implement a vectorized version of arraySumSerial in arraySumVector. Your implementation may assume that VECTOR_WIDTH is a factor of the input array size N. Whereas the serial implementation has O(N) span, your implementation should have at most O(N / VECTOR_WIDTH + log2(VECTOR_WIDTH)) span. You may find the hadd and interleave operations useful.
-
+随着 VECTOR_WIDTH 提升，vector utilization 不断下降-
 详见代码
 
 ## Program 3: Parallel Fractal Generation Using ISPC
+
+> Compile and run the program mandelbrot ispc. The ISPC compiler is currently configured to emit 8-wide AVX2 vector instructions. What is the maximum speedup you expect given what you know about these CPUs? Why might the number you observe be less than this ideal? (Hint: Consider the characteristics of the computation you are performing? Describe the parts of the image that present challenges for SIMD execution? Comparing the performance of rendering the different views of the Mandelbrot set may help confirm your hypothesis.).
+
+最大理论加速比应该在 8x 左右
+
+实际上 VIEW 1 的加速比在 4.57x，VIEW 2 的加速比在 3.98x
+
+由于白色节点的的迭代次数较多，黑色节点的迭代次数较少，
+当向量同时包含了黑白节点，其并行度就会降低。
+而在 VIEW 2 中黑白节点的「混合」更多，导致了其加速比更低。
+
+> Run mandelbrot_ispc with the parameter --tasks. What speedup do you observe on view 1? What is the speedup over the version of mandelbrot_ispc that does not partition that computation into tasks?
+
+||origin|ISPC|task ISPC|
+|-|-|-|-|
+|speed up (view 1)|1.00x|4.47x|8.87x|
+|speed up (view 2)|1.00x|3.83x|6.88x|
+
+* SIMD instructions executed on a single core.
+* Task executed in parallel on different CPU cores
+
+> There is a simple way to improve the performance of mandelbrot_ispc --tasks by changing the number of tasks the code creates. By only changing code in the function mandelbrot_ispc_withtasks(), you should be able to achieve performance that exceeds the sequential version of the code by over 32 times! How did you determine how many tasks to create? Why does the number you chose work best?
+
+当 task 数在 800 时，加速效果，几乎是串行效率的 28 倍
+
+如 ISPC 文档所说：
+
+> In general, one should launch many more tasks than there are processors in the system to ensure good load-balancing, but not so many that the overhead of scheduling and running tasks dominates the computation.
+
+提高 task 数能提高并行的效率。
+
+> Extra Credit: (2 points) What are differences between the thread abstraction (used in Program 1) and the ISPC task abstraction? There are some obvious differences in semantics between the (create/join and (launch/sync) mechanisms, but the implications of these differences are more subtle. Here's a thought experiment to guide your answer: what happens when you launch 10,000 ISPC tasks? What happens when you launch 10,000 threads? (For this thought experiment, please discuss in the general case
+
+不会，感觉 task 和 thread 差不多，
+但 task 对应的是 SIMD instruction
+
+> The smart-thinking student's question: Hey wait! Why are there two different mechanisms (foreach and launch) for expressing independent, parallelizable work to the ISPC system? Couldn't the system just partition the many iterations of foreach across all cores and also emit the appropriate SIMD code for the cores?
+
+因为 task 和 foreach 面向的任务不同
+
+* foreach：控制流几乎相同
+* task：控制流可以完全不同
 
