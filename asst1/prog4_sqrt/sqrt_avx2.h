@@ -1,6 +1,6 @@
 #include <immintrin.h>
 
-#define VECTOR_SIZE 32
+#define VECTOR_SIZE 8
 
 __m256 _mm256_abs(__m256 x) {
     static const __m256 sign_bit = _mm256_set1_ps(-0.0f);

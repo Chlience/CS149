@@ -40,9 +40,9 @@ int main() {
         // to you generate best and worse-case speedups
         
         // starter code populates array with random input values
-        // values[i] = .001f + 2.998f * static_cast<float>(rand()) / RAND_MAX;
+        values[i] = .001f + 2.998f * static_cast<float>(rand()) / RAND_MAX;
         // values[i] = 0.000000000001f; // maximizes speedup for ISPC
-        values[i] = (i % 8) ? 1.f : 0.00000001; // minimizes speedup for ISPC
+        // values[i] = (i % 8) ? 1.f : 0.00000001; // minimizes speedup for ISPC
     }
 
     // generate a gold version to check results

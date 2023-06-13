@@ -41,7 +41,6 @@
 
 > Modify the mapping of work to threads to achieve to improve speedup to at about 7-8x on both views of the Mandelbrot set (if you're above 7x that's fine, don't sweat it). You may not use any synchronization between threads in your solution. We are expecting you to come up with a single work decomposition policy that will work well for all thread counts---hard coding a solution specific to each configuration is not allowed! (Hint: There is a very simple static assignment that will achieve this goal, and no communication/synchronization among threads is necessary.). In your writeup, describe your approach to parallelization and report the final 8-thread speedup obtained.
 
-
 观察计算密度分布，再进行行的分配，让每个进程的计算量趋于相等。
 关于行和计算量的关系可以静态分析，或者用插值实现
 
@@ -118,7 +117,7 @@ TODO
 
 > Build and run `sqrt`. Report the ISPC implementation speedup for single CPU core (no tasks) and when using all cores (with tasks). What is the speedup due to SIMD parallelization? What is the speedup due to multi-core parallelization?
 
-```
+```sh
 [sqrt serial]:          [970.209] ms
 [sqrt ispc]:            [224.172] ms
 [sqrt task ispc]:       [44.081] ms
@@ -130,7 +129,7 @@ TODO
 
 当 value[] 相等并且接近于 0 时，ISPC 能达到最大加速比 6.8x 左右，同时使用 task 提供的加速比略微降低。
 
-```
+```sh
 [sqrt serial]:          [4423.231] ms
 [sqrt ispc]:            [661.986] ms
 [sqrt task ispc]:       [127.715] ms
@@ -146,7 +145,7 @@ TODO
 values[i] = (i % 8) ? 1.f : 0.00000001;
 ```
 
-```
+```sh
 [sqrt serial]:          [430.918] ms
 [sqrt ispc]:            [477.884] ms
 [sqrt task ispc]:       [93.316] ms
@@ -164,12 +163,12 @@ values[i] = (i % 8) ? 1.f : 0.00000001;
 
 随机数据，使用 `_mm256`，详见代码
 
-```
-[sqrt serial]:          [969.275] ms
-[sqrt ispc]:            [233.455] ms
-[sqrt task ispc]:       [45.666] ms
-[sqrt avx2]:            [57.900] ms
-                                (4.15x speedup from ISPC)
-                                (21.23x speedup from task ISPC)
-                                (16.74x speedup from AVX2)
+```sh
+[sqrt serial]:          [994.241] ms
+[sqrt ispc]:            [225.797] ms
+[sqrt task ispc]:       [45.042] ms
+[sqrt avx2]:            [191.447] ms
+                                (4.40x speedup from ISPC)
+                                (22.07x speedup from task ISPC)
+                                (5.19x speedup from AVX2)
 ```
