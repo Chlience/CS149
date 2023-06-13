@@ -115,3 +115,62 @@ TODO
 * foreach：控制流几乎相同
 * task：控制流可以完全不同
 
+## Program 4: Iterative `sqrt`
+
+> Build and run `sqrt`. Report the ISPC implementation speedup for single CPU core (no tasks) and when using all cores (with tasks). What is the speedup due to SIMD parallelization? What is the speedup due to multi-core parallelization?
+
+```
+[sqrt serial]:          [970.209] ms
+[sqrt ispc]:            [224.172] ms
+[sqrt task ispc]:       [44.081] ms
+                                (4.33x speedup from ISPC)
+                                (22.01x speedup from task ISPC)
+```
+
+> Modify the contents of the array values to improve the relative speedup of the ISPC implementations. Construct a specifc input that maximizes speedup over the sequential version of the code and report the resulting speedup achieved (for both the with- and without-tasks ISPC implementations). Does your modification improve SIMD speedup? Does it improve multi-core speedup (i.e., the benefit of moving from ISPC without-tasks to ISPC with tasks)? Please explain why.
+
+当 value[] 相等并且接近于 0 时，ISPC 能达到最大加速比 6.8x 左右，同时使用 task 提供的加速比略微降低。
+
+```
+[sqrt serial]:          [4423.231] ms
+[sqrt ispc]:            [661.986] ms
+[sqrt task ispc]:       [127.715] ms
+                                (6.68x speedup from ISPC)
+                                (34.63x speedup from task ISPC)
+```
+
+> Construct a specific input for sqrt that minimizes speedup for ISPC (without-tasks) over the sequential version of the code. Describe this input, describe why you chose it, and report the resulting relative performance of the ISPC implementations. What is the reason for the loss in efficiency? (keep in mind we are using the --target=avx2 option for ISPC, which generates 8-wide SIMD instructions).
+
+在一条 SIMD 指令中，大量迭代次数少的数据（1）中插入一个迭代次数多的数据（1e-6)
+
+```c
+values[i] = (i % 8) ? 1.f : 0.00000001;
+```
+
+```
+[sqrt serial]:          [430.918] ms
+[sqrt ispc]:            [477.884] ms
+[sqrt task ispc]:       [93.316] ms
+                                (0.90x speedup from ISPC)
+                                (4.62x speedup from task ISPC)
+```
+
+此时，并行的数据需要的迭代次数不同，
+这导致了并行效率的下降。
+
+同时，由于 SIMD 指令和普通指令原本的执行效率差异，
+导致最终加速比小于 1
+
+> Extra Credit: (up to 2 points) Write your own version of the `sqrt` function manually using AVX2 intrinsics. To get credit your implementation should be nearly as fast (or faster) than the binary produced using ISPC. You may find the [Intel Intrinsics Guide](https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html) very helpful.
+
+随机数据，使用 `_mm256`，详见代码
+
+```
+[sqrt serial]:          [969.275] ms
+[sqrt ispc]:            [233.455] ms
+[sqrt task ispc]:       [45.666] ms
+[sqrt avx2]:            [57.900] ms
+                                (4.15x speedup from ISPC)
+                                (21.23x speedup from task ISPC)
+                                (16.74x speedup from AVX2)
+```

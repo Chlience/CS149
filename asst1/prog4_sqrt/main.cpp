@@ -5,8 +5,14 @@
 
 #include "CycleTimer.h"
 #include "sqrt_ispc.h"
+#include "sqrt_avx2.h"
 
 using namespace ispc;
+
+const unsigned int N = 20 * 1000 * 1000;
+alignas(32) float values[N];
+alignas(32) float output[N];
+alignas(32) float gold[N];
 
 extern void sqrtSerial(int N, float startGuess, float* values, float* output);
 
@@ -20,12 +26,12 @@ static void verifyResult(int N, float* result, float* gold) {
 
 int main() {
 
-    const unsigned int N = 20 * 1000 * 1000;
+    // const unsigned int N = 20 * 1000 * 1000;
     const float initialGuess = 1.0f;
 
-    float* values = new float[N];
-    float* output = new float[N];
-    float* gold = new float[N];
+    // float* values = new float[N];
+    // float* output = new float[N];
+    // float* gold = new float[N];
 
     for (unsigned int i=0; i<N; i++)
     {
@@ -34,7 +40,9 @@ int main() {
         // to you generate best and worse-case speedups
         
         // starter code populates array with random input values
-        values[i] = .001f + 2.998f * static_cast<float>(rand()) / RAND_MAX;
+        // values[i] = .001f + 2.998f * static_cast<float>(rand()) / RAND_MAX;
+        // values[i] = 0.000000000001f; // maximizes speedup for ISPC
+        values[i] = (i % 8) ? 1.f : 0.00000001; // minimizes speedup for ISPC
     }
 
     // generate a gold version to check results
@@ -92,12 +100,25 @@ int main() {
 
     verifyResult(N, output, gold);
 
+    double minAVX2 = 1e30;
+    for (int i = 0; i < 3; ++i) {
+        double startTime = CycleTimer::currentSeconds();
+        sqrt_avx2(N, initialGuess, values, output);
+        double endTime = CycleTimer::currentSeconds();
+        minAVX2 = std::min(minAVX2, endTime - startTime);
+    }
+
+    printf("[sqrt avx2]:\t\t[%.3f] ms\n", minAVX2 * 1000);
+
+    verifyResult(N, output, gold);
+
     printf("\t\t\t\t(%.2fx speedup from ISPC)\n", minSerial/minISPC);
     printf("\t\t\t\t(%.2fx speedup from task ISPC)\n", minSerial/minTaskISPC);
+    printf("\t\t\t\t(%.2fx speedup from AVX2)\n", minSerial/minAVX2);
 
-    delete [] values;
-    delete [] output;
-    delete [] gold;
+    // delete [] values;
+    // delete [] output;
+    // delete [] gold;
 
     return 0;
 }
