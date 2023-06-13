@@ -1,4 +1,4 @@
-# Assignment 1: Performance Analysis on a Quad-Core CPU #
+# Assignment 1: Performance Analysis on a Quad-Core CPU
 
 原始题目见 [Handout.md](./Handout.md)
 
@@ -21,7 +21,7 @@
 |7|3.11x|3.31x|
 |8|3.71x|3.85x|
 
-根据该表格，加速比和使用的线程数并不是线性关系。
+根据该表格，加速比和使用的线程数并不是线性关系
 
 > To confirm (or disprove) your hypothesis, measure the amount of time each thread requires to complete its work by inserting timing code at the beginning and end of workerThreadStart(). How do your measurements explain the speedup graph you previously created?
 
@@ -35,7 +35,7 @@
 这导致某些时刻，线程数增加反而导致加速比下降（2 to 3）
 
 同时，在 VIEW 2 下线程数和加速比更接近线性关系，
-这是由于 VIEW 2 下均分行分配给线程的计算量相近。
+这是由于 VIEW 2 下均分行分配给线程的计算量相近
 
 ![prog1-1](./assets/prog1-1.png)
 
@@ -50,8 +50,7 @@ TODO
 > Now run your improved code with 16 threads. Is performance noticably greater than when running with eight threads? Why or why not?
 
 当不同线程的任务量已经趋于相等时，超过物理线程的线程数会增加非并行部分的花费，
-
-但在并行性不够好时，增加线程超过物理线程数相当于手动将任务分成更小的部分，从而提高加速比。
+但在并行性不够好时，增加线程超过物理线程数相当于手动将任务分成更小的部分，从而提高加速比
 
 ## Program 2: Vectorizing Code Using SIMD Intrinsics
 
@@ -68,7 +67,7 @@ TODO
 |8|68.1%|
 |16|66.3%|
 
-随着 VECTOR_WIDTH 提升，vector utilization 不断下降-
+随着 VECTOR_WIDTH 提升，vector utilization 不断下降。
 详见代码
 
 ## Program 3: Parallel Fractal Generation Using ISPC
@@ -81,7 +80,7 @@ TODO
 
 由于白色节点的的迭代次数较多，黑色节点的迭代次数较少，
 当向量同时包含了黑白节点，其并行度就会降低。
-而在 VIEW 2 中黑白节点的「混合」更多，导致了其加速比更低。
+而在 VIEW 2 中黑白节点的「混合」更多，导致了其加速比更低
 
 > Run mandelbrot_ispc with the parameter --tasks. What speedup do you observe on view 1? What is the speedup over the version of mandelbrot_ispc that does not partition that computation into tasks?
 
@@ -101,7 +100,7 @@ TODO
 
 > In general, one should launch many more tasks than there are processors in the system to ensure good load-balancing, but not so many that the overhead of scheduling and running tasks dominates the computation.
 
-提高 task 数能提高并行的效率。
+提高 task 数能提高并行的效率
 
 > Extra Credit: (2 points) What are differences between the thread abstraction (used in Program 1) and the ISPC task abstraction? There are some obvious differences in semantics between the (create/join and (launch/sync) mechanisms, but the implications of these differences are more subtle. Here's a thought experiment to guide your answer: what happens when you launch 10,000 ISPC tasks? What happens when you launch 10,000 threads? (For this thought experiment, please discuss in the general case
 
@@ -156,7 +155,7 @@ values[i] = (i % 8) ? 1.f : 0.00000001;
 ```
 
 此时，并行的数据需要的迭代次数不同，
-这导致了并行效率的下降。
+导致了并行效率的下降
 
 同时，由于 SIMD 指令和普通指令原本的执行效率差异，
 导致最终加速比小于 1
