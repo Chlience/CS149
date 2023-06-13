@@ -37,7 +37,7 @@
 同时，在 VIEW 2 下线程数和加速比更接近线性关系，
 这是由于 VIEW 2 下均分行分配给线程的计算量相近。
 
-![prog1-1](./assets/prog1-1.png)7-/
+![prog1-1](./assets/prog1-1.png)
 
 > Modify the mapping of work to threads to achieve to improve speedup to at about 7-8x on both views of the Mandelbrot set (if you're above 7x that's fine, don't sweat it). You may not use any synchronization between threads in your solution. We are expecting you to come up with a single work decomposition policy that will work well for all thread counts---hard coding a solution specific to each configuration is not allowed! (Hint: There is a very simple static assignment that will achieve this goal, and no communication/synchronization among threads is necessary.). In your writeup, describe your approach to parallelization and report the final 8-thread speedup obtained.
 
@@ -62,7 +62,7 @@ TODO
 > Run ./myexp -s 10000 and sweep the vector width from 2, 4, 8, to 16. Record the resulting vector utilization. You can do this by changing the #define VECTOR_WIDTH value in CS149intrin.h. Does the vector utilization increase, decrease or stay the same as VECTOR_WIDTH changes? Why?
 
 |vector width|utilization|
-|-|-|-|
+|-|-|
 |2|79.8%|
 |4|72.1%|
 |8|68.1%|
@@ -141,7 +141,7 @@ TODO
 
 > Construct a specific input for sqrt that minimizes speedup for ISPC (without-tasks) over the sequential version of the code. Describe this input, describe why you chose it, and report the resulting relative performance of the ISPC implementations. What is the reason for the loss in efficiency? (keep in mind we are using the --target=avx2 option for ISPC, which generates 8-wide SIMD instructions).
 
-在一条 SIMD 指令中，大量迭代次数少的数据（1）中插入一个迭代次数多的数据（1e-6)
+在一条 SIMD 指令中，大量迭代次数少的数据中插入一个迭代次数多的数据
 
 ```c
 values[i] = (i % 8) ? 1.f : 0.00000001;
