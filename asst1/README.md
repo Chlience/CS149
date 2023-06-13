@@ -172,3 +172,27 @@ values[i] = (i % 8) ? 1.f : 0.00000001;
                                 (22.07x speedup from task ISPC)
                                 (5.19x speedup from AVX2)
 ```
+
+## Program 5: BLAS `saxpy`
+
+> Compile and run saxpy. The program will report the performance of ISPC (without tasks) and ISPC (with tasks) implementations of saxpy. What speedup from using ISPC with tasks do you observe? Explain the performance of this program. Do you think it can be substantially improved? (For example, could you rewrite the code to achieve near linear speedup? Yes or No? Please justify your answer.)
+
+```sh
+[saxpy ispc]:           [18.715] ms     [15.924] GB/s   [2.137] GFLOPS
+[saxpy task ispc]:      [17.892] ms     [16.657] GB/s   [2.236] GFLOPS
+                                (1.05x speedup from use of tasks)
+```
+
+很难，因为数据读取量太大，瓶颈在 I/O
+
+> __Extra Credit:__ (1 point) Note that the total memory bandwidth consumed computation in `main.cpp` is `TOTAL_BYTES = 4 * N * sizeof(float);`.  Even though `saxpy` loads one element from X, one element from Y, and writes one element to `result` the multiplier by 4 is correct.  Why is this the case? (Hint, think about how CPU caches work.)
+
+TODO
+
+> __Extra Credit:__ (points handled on a case-by-case basis) Improve the performance of `saxpy`. We're looking for a significant speedup here, not just a few percentage points. If successful, describe how you did it and what a best-possible implementation on these systems might achieve. Also, if successful, come tell the staff, we'll be interested. ;-)
+
+TODO
+
+## Program 6: Making `K-Means` Faster
+
+TODO
