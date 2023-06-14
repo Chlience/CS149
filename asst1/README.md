@@ -187,7 +187,9 @@ values[i] = (i % 8) ? 1.f : 0.00000001;
 
 > __Extra Credit:__ (1 point) Note that the total memory bandwidth consumed computation in `main.cpp` is `TOTAL_BYTES = 4 * N * sizeof(float);`.  Even though `saxpy` loads one element from X, one element from Y, and writes one element to `result` the multiplier by 4 is correct.  Why is this the case? (Hint, think about how CPU caches work.)
 
-TODO
+读取 X[i], Y[i] 只需要 1 次内存到 cache。而写 `result[i]` 需要先将内存数据读取到 cache，修改后再写回内存
+
+故总读写量 `TOTAL_BYTES = 4 * N * sizeof(float);`
 
 > __Extra Credit:__ (points handled on a case-by-case basis) Improve the performance of `saxpy`. We're looking for a significant speedup here, not just a few percentage points. If successful, describe how you did it and what a best-possible implementation on these systems might achieve. Also, if successful, come tell the staff, we'll be interested. ;-)
 
